@@ -4,7 +4,7 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'export',
-  // assetPrefix: './', // Removido para compatibilidade com next/font no build
+  // assetPrefix: './', // Removido/Comentado para compatibilidade com next/font e custom protocol no Electron
   typescript: {
     ignoreBuildErrors: true,
   },

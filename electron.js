@@ -19,11 +19,11 @@ async function startApp() {
     const win = new BrowserWindow({
       width: 1280,
       height: 800,
-      icon: path.join(__dirname, 'assets', 'icon.png'), // Mantém .png conforme arquivo original do projeto
+      icon: path.join(__dirname, 'assets', 'icon.png'), // Use .png para compatibilidade geral
       webPreferences: {
         nodeIntegration: true, // Cuidado: Considere alternativas mais seguras para produção (contextBridge)
         contextIsolation: false, // Cuidado: Considere alternativas mais seguras para produção
-        // webSecurity: false, // Pode ser necessário para carregar recursos locais com o protocolo customizado em alguns casos, mas use com cautela.
+        // webSecurity: false, // Para depuração extrema, mas não recomendado para produção.
       },
     });
 
@@ -49,6 +49,7 @@ async function startApp() {
       relativePath = relativePath.split('?')[0].split('#')[0];
 
       const absolutePath = path.join(__dirname, 'out', relativePath);
+      // console.log(`[app protocol] Requesting: ${request.url} -> Serving: ${absolutePath}`); // Descomente para depuração
       callback({ path: absolutePath });
     });
 
@@ -77,7 +78,7 @@ async function startApp() {
 startApp().catch((err) => {
   console.error('Falha ao iniciar a aplicação Electron:', err);
   // Opcionalmente, mostre um diálogo de erro para o usuário aqui, se necessário, usando o módulo dialog do Electron.
-  // Exemplo: dialog.showErrorBox('Erro na Aplicação', 'Falha ao iniciar. Verifique os logs.');
+  // Exemplo: require('electron').dialog.showErrorBox('Erro na Aplicação', 'Falha ao iniciar. Verifique os logs.');
   if (app.isReady()) { // Só chame app.quit() se o app estiver pronto, para evitar erros
     app.quit();
   } else {
