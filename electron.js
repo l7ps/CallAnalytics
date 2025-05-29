@@ -27,9 +27,11 @@ async function startApp() {
       },
     });
 
+    // SEMPRE ABRE O DEVTOOLS PARA DEPURAÇÃO
+    win.webContents.openDevTools();
+
     if (isDev) {
       win.loadURL('http://localhost:9002'); // Garanta que esta porta corresponda ao seu servidor de desenvolvimento Next.js
-      win.webContents.openDevTools();
     } else {
       // Carrega os arquivos estáticos exportados do Next.js usando o protocolo customizado
       win.loadURL('app://index.html');
@@ -85,3 +87,4 @@ startApp().catch((err) => {
     process.exit(1); // Saída forçada se o app nem sequer inicializou
   }
 });
+
