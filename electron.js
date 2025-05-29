@@ -1,45 +1,66 @@
 
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const isDev = require('electron-is-dev');
 
-function createWindow() {
-  const win = new BrowserWindow({
-    width: 1280,
-    height: 800,
-    icon: path.join(__dirname, 'assets', 'icon.png'), // Using .png for broader compatibility, .ico for win in package.json
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
+// Envolve a lógica principal em uma função assíncrona para usar await para importação dinâmica
+async function startApp() {
+  // Importa dinamicamente electron-is-dev
+  // Módulos ESM frequentemente exportam uma propriedade `default`.
+  const importedIsDev = await import('electron-is-dev');
+  const isDev = importedIsDev.default;
+
+  function createWindow() {
+    const win = new BrowserWindow({
+      width: 1280,
+      height: 800,
+      icon: path.join(__dirname, 'assets', 'icon.png'), // Mantém .png conforme arquivo original do projeto
+      webPreferences: {
+        nodeIntegration: true, // Cuidado: Considere alternativas mais seguras para produção (contextBridge)
+        contextIsolation: false, // Cuidado: Considere alternativas mais seguras para produção
+      },
+    });
+
+    if (isDev) {
+      win.loadURL('http://localhost:9002'); // Garanta que esta porta corresponda ao seu servidor de desenvolvimento Next.js
+      win.webContents.openDevTools();
+    } else {
+      // Carrega os arquivos estáticos exportados do Next.js
+      win.loadFile(path.join(__dirname, 'out', 'index.html'));
     }
+  }
+
+  // Este método será chamado quando o Electron terminar
+  // a inicialização e estiver pronto para criar janelas do navegador.
+  app.whenReady().then(() => {
+    createWindow();
+
+    app.on('activate', () => {
+      // No macOS é comum recriar uma janela no aplicativo quando o
+      // ícone do dock é clicado e não há outras janelas abertas.
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+      }
+    });
   });
 
-  if (isDev) {
-    win.loadURL('http://localhost:9002'); // Ensure this port matches your Next.js dev server
-    win.webContents.openDevTools();
-  } else {
-    // Loads the Next.js exported static files
-    win.loadFile(path.join(__dirname, 'out', 'index.html'));
-  }
+  // Encerra quando todas as janelas são fechadas, exceto no macOS.
+  app.on('window-all-closed', () => {
+    // No macOS, é comum aplicativos e suas barras de menu
+    // permanecerem ativos até que o usuário saia explicitamente com Cmd + Q.
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
 }
 
-app.whenReady().then(() => {
-  createWindow();
-
-  app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
-});
-
-app.on('window-all-closed', () => {
-  // Quit when all windows are closed, except on macOS. There, it's common
-  // for applications and their menu bar to stay active until the user quits
-  // explicitly with Cmd + Q.
-  if (process.platform !== 'darwin') {
+// Chama a função assíncrona para iniciar o aplicativo
+startApp().catch((err) => {
+  console.error('Falha ao iniciar a aplicação Electron:', err);
+  // Opcionalmente, mostre um diálogo de erro para o usuário aqui, se necessário, usando o módulo dialog do Electron.
+  // Exemplo: dialog.showErrorBox('Erro na Aplicação', 'Falha ao iniciar. Verifique os logs.');
+  if (app.isReady()) { // Só chame app.quit() se o app estiver pronto, para evitar erros
     app.quit();
+  } else {
+    process.exit(1); // Saída forçada se o app nem sequer inicializou
   }
 });
