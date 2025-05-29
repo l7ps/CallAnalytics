@@ -1,0 +1,294 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 25% 96%; /* Light Gray #F0F4F8 */
+    --foreground: 210 10% 23%; /* Dark Gray for text */
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 10% 23%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 10% 23%;
+
+    --primary: 127 95% 15%; /* Muted Blue #024C0C */
+    --primary-foreground: 0 0% 98%; /* White for text on primary */
+
+    --secondary: 210 25% 90%; /* Slightly darker gray for secondary elements */
+    --secondary-foreground: 210 10% 23%;
+
+    --muted: 210 25% 90%;
+    --muted-foreground: 210 10% 45%;
+
+    --accent: 16 100% 70%; /* Contrasting Orange #FF8A65 */
+    --accent-foreground: 0 0% 98%; /* White for text on accent */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 20% 85%;
+    --input: 210 20% 90%;
+    --ring: 127 95% 15%; /* Primary color for ring */
+
+    --chart-1: 127 95% 15%; /* Primary */
+    --chart-2: 16 100% 70%; /* Accent */
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+
+    /* Sidebar colors can remain or be adjusted if sidebar is used extensively */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 210 10% 15%; /* Dark background */
+    --foreground: 0 0% 98%; /* Light text */
+
+    --card: 210 10% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 210 10% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 127 85% 20%; /* Adjusted primary for dark mode */
+    --primary-foreground: 0 0% 98%; /* Light text on dark green */
+
+    --secondary: 210 10% 25%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 210 10% 25%;
+    --muted-foreground: 0 0% 63.9%;
+
+    --accent: 16 100% 60%; /* Slightly adjusted accent for dark mode */
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 10% 30%;
+    --input: 210 10% 30%;
+    --ring: 127 85% 20%; /* Primary color for ring in dark mode */
+
+    --chart-1: 127 85% 20%; /* Primary for charts in dark mode */
+    --chart-2: 16 100% 60%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Adjust sidebar for dark mode if needed */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@media print {
+  body {
+    font-size: 10pt; /* Reduzir um pouco o tamanho da fonte geral */
+    background-color: white !important; /* Fundo branco para impressão */
+    color: black !important; /* Texto preto para impressão */
+    -webkit-print-color-adjust: exact !important; /* Força cores no Chrome/Safari */
+    print-color-adjust: exact !important; /* Força cores em outros navegadores */
+  }
+
+  /* Ocultar elementos não essenciais */
+  header.text-left.mb-8 .text-muted-foreground, /* Subtítulo da página */
+  footer.text-center.py-8, /* Rodapé "Desenvolvido por" */
+  .container > .space-y-6 > .shadow-lg:first-child, /* Card de upload de CSV */
+  .container > .space-y-6 > .shadow-lg:nth-child(3) .card-header, /* Cabeçalho do Card de Filtros */
+  .container > .space-y-6 > .shadow-lg:nth-child(3) .card-content > .grid, /* Grid de filtros */
+  .container > .space-y-6 > .shadow-lg:nth-child(3) .card-content > .flex, /* Botões Aplicar/Limpar Filtros */
+  .container > .space-y-6 > .w-full > .grid.mb-4, /* Lista de Abas (TabsList) */
+  button:not(.popover-trigger button):not(.dialog-footer button), /* Ocultar botões, exceto os de popover/dialog abertos */
+  .lucide-pencil, /* Ícone de editar em tabelas */
+  .lucide-filter, /* Ícone de filtro nos botões de filtro */
+  .lucide-user-plus, /* Ícone de adicionar usuário */
+  #csvFile, /* Input de upload de arquivo */
+  label[for="csvFile"], /* Label do input de upload */
+  .popover, /* Popovers de data, etc., devem ser resolvidos antes da impressão */
+  .dropdown-menu, /* Menus dropdown */
+  .dialog:not([open]), /* Dialogs fechados */
+  .toaster, /* Toasts */
+  .pagination-controls /* Controles de paginação da tabela de logs detalhados */
+   {
+    display: none !important;
+  }
+  
+  /* Ajustar visibilidade do logo e título para impressão */
+  header.text-left.mb-8 img {
+    max-height: 30px !important; /* Reduzir altura do logo na impressão */
+    margin-bottom: 0.25rem !important;
+  }
+  header.text-left.mb-8 h1.text-4xl {
+    font-size: 18pt !important; /* Reduzir tamanho do título principal */
+  }
+  header.text-left.mb-8 .lucide-activity { /* Ocultar ícone de atividade no título principal */
+    display: none !important;
+  }
+
+
+  /* Garantir que o container principal e o conteúdo da aba de relatório sejam visíveis */
+  .container, .container > .space-y-6, .container > .space-y-6 > .w-full {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  
+  /* Mostrar apenas o conteúdo da aba "Relatório" (ou a aba ativa se for a única renderizada) */
+  .w-full > div[role="tabpanel"]:not([data-state="active"]) {
+     display: none !important;
+  }
+   div[role="tabpanel"][data-state="active"] {
+    display: block !important; /* Garante que a aba ativa é exibida */
+    margin-top: 0 !important; /* Remove margem superior da aba de conteúdo */
+  }
+  /* Se for a aba de logs detalhados, mostrar todos os TRs */
+  div[role="tabpanel"][data-state="active"][value="detailed-logs"] table tbody tr {
+    display: table-row !important;
+  }
+
+
+  .shadow-lg, .card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important; /* Adicionar borda leve para separar cards */
+    margin-bottom: 1rem !important;
+    page-break-inside: avoid !important; /* Tentar não quebrar cards no meio da página */
+  }
+
+  .card-header, .card-content, .card-title, .card-description {
+     background-color: transparent !important; /* Remove fundos de cards se houver */
+  }
+
+
+  /* Ajustes para grids para melhor fluxo na impressão */
+  .grid {
+     display: block !important; /* Tenta linearizar grids, exceto os de métricas */
+  }
+  .renderMetricsCard .grid { /* Manter grid para métricas */
+    display: grid !important;
+  }
+
+  .grid-cols-1, .grid-cols-2, .lg\:grid-cols-2, .lg\:grid-cols-4,
+  .sm\:grid-cols-2, .sm\:grid-cols-3, .lg\:grid-cols-6 {
+    grid-template-columns: 1fr !important; /* Forçar uma coluna para a maioria dos grids */
+  }
+   .renderMetricsCard .sm\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important; /* 3 colunas para métricas em SM */
+  }
+  .renderMetricsCard .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important; /* 4 colunas para métricas em LG */
+  }
+
+
+  .gap-4, .gap-6 {
+    gap: 0.5rem !important; /* Reduzir espaçamentos */
+  }
+
+
+  /* Ajustes específicos para gráficos */
+  .recharts-responsive-container, .chart-container {
+    width: 100% !important;
+    height: 280px !important; /* Altura fixa menor para impressão */
+    aspect-ratio: auto !important;
+    page-break-inside: avoid !important;
+  }
+  .recharts-wrapper {
+     margin: 0 auto !important; /* Centralizar gráficos */
+  }
+  .recharts-surface, svg.recharts-surface {
+     overflow: visible !important;
+  }
+   .recharts-label-list text, .recharts-cartesian-axis-tick-value, .recharts-tooltip-item, .recharts-legend-item-text {
+    fill: black !important; /* Garantir que texto do gráfico seja preto */
+    font-size: 8pt !important;
+  }
+  .recharts-bar-rectangle path {
+    stroke: black !important; /* Adicionar contorno às barras se necessário */
+    stroke-width: 0.5px !important;
+    fill-opacity: 0.7 !important; /* Leve transparência para economizar tinta */
+  }
+
+
+  /* Ajustes para tabelas */
+  table {
+    width: 100% !important;
+    page-break-inside: auto !important;
+    font-size: 9pt !important;
+  }
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+  thead {
+    display: table-header-group !important; /* Repetir cabeçalho da tabela em novas páginas */
+  }
+  th, td {
+    padding: 4px !important; /* Reduzir padding das células */
+    border: 1px solid #eee !important;
+  }
+  .overflow-x-auto {
+      overflow-x: visible !important; /* Evitar scrollbars na impressão */
+  }
+  .table-caption {
+    display: none !important; /* Ocultar caption da tabela se houver */
+  }
+
+  /* Ajustes para card de métricas chave */
+   .renderMetricsCard ul {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important; /* Espaçar itens */
+  }
+  .renderMetricsCard li {
+    flex-basis: calc(33% - 10px) !important; /* Tentar 3 por linha */
+    margin-bottom: 0.5rem !important;
+    border: 1px solid #eee !important;
+    padding: 0.5rem !important;
+  }
+   @media (max-width: 768px) { /* Para telas menores, antes de imprimir */
+    .renderMetricsCard li {
+      flex-basis: calc(50% - 10px) !important; /* Tentar 2 por linha */
+    }
+  }
+  @media (max-width: 480px) {
+    .renderMetricsCard li {
+      flex-basis: 100% !important; /* 1 por linha */
+    }
+  }
+
+  h1, h2, h3, .card-title {
+    font-size: 12pt !important; /* Ajustar tamanho dos títulos */
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.3rem !important;
+    color: black !important;
+  }
+  p, .card-description, .text-muted-foreground {
+    font-size: 9pt !important;
+    color: #333 !important;
+  }
+}
