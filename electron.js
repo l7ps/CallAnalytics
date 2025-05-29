@@ -1,6 +1,12 @@
 
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, protocol } = require('electron');
 const path = require('path');
+
+// Registra o esquema 'app' como privilegiado.
+// Isso deve ser feito antes do evento 'ready' do app.
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true } }
+]);
 
 // Envolve a lógica principal em uma função assíncrona para usar await para importação dinâmica
 async function startApp() {
@@ -17,6 +23,7 @@ async function startApp() {
       webPreferences: {
         nodeIntegration: true, // Cuidado: Considere alternativas mais seguras para produção (contextBridge)
         contextIsolation: false, // Cuidado: Considere alternativas mais seguras para produção
+        // webSecurity: false, // Pode ser necessário para carregar recursos locais com o protocolo customizado em alguns casos, mas use com cautela.
       },
     });
 
@@ -24,14 +31,27 @@ async function startApp() {
       win.loadURL('http://localhost:9002'); // Garanta que esta porta corresponda ao seu servidor de desenvolvimento Next.js
       win.webContents.openDevTools();
     } else {
-      // Carrega os arquivos estáticos exportados do Next.js
-      win.loadFile(path.join(__dirname, 'out', 'index.html'));
+      // Carrega os arquivos estáticos exportados do Next.js usando o protocolo customizado
+      win.loadURL('app://index.html');
     }
   }
 
   // Este método será chamado quando o Electron terminar
   // a inicialização e estiver pronto para criar janelas do navegador.
   app.whenReady().then(() => {
+    // Configura o manipulador para o protocolo 'app'
+    // Isso deve ser feito após o app estar 'ready' e o esquema ter sido registrado como privilegiado.
+    protocol.registerFileProtocol('app', (request, callback) => {
+      // request.url será algo como 'app://index.html' ou 'app://_next/static/css/main.css'
+      let relativePath = request.url.slice('app://'.length);
+      
+      // Remove query parameters ou hash se existirem, para obter o caminho do arquivo puro
+      relativePath = relativePath.split('?')[0].split('#')[0];
+
+      const absolutePath = path.join(__dirname, 'out', relativePath);
+      callback({ path: absolutePath });
+    });
+
     createWindow();
 
     app.on('activate', () => {

@@ -4,7 +4,7 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'export',
-  assetPrefix: './', // Adicionado para caminhos relativos
+  // assetPrefix: './', // Removido para compatibilidade com next/font no build
   typescript: {
     ignoreBuildErrors: true,
   },
